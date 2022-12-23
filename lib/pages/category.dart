@@ -19,7 +19,7 @@ class _CategoryPageState extends State<CategoryPage> {
   ];
 
   List<Widget> bodyCategory = [
-    AllCategory(),
+    const AllCategory(),
     CategoryOne(),
     CategoryTwo(),
   ];
@@ -43,11 +43,11 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF4F4F4),
+      backgroundColor: const Color(0xFFF4F4F4),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Color(0xFFFFC085),
-        iconTheme: IconThemeData(
+        backgroundColor: const Color(0xFFFFC085),
+        iconTheme: const IconThemeData(
           color: Color(0xffF2861E),
         ),
         centerTitle: true,
@@ -55,7 +55,7 @@ class _CategoryPageState extends State<CategoryPage> {
           onTap: () {
             print(widget.id_body);
           },
-          child: Text(
+          child: const Text(
             "Kategori Produk",
             style: TextStyle(
               fontSize: 16,
@@ -69,7 +69,7 @@ class _CategoryPageState extends State<CategoryPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
@@ -95,9 +95,9 @@ class _CategoryPageState extends State<CategoryPage> {
                           Container(
                             height: 35,
                             decoration: BoxDecoration(
-                              color: Color(0xffF2861E),
+                              color: const Color(0xffF2861E),
                               borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Color(0xFFC2C2C2),
                                   blurRadius: 2,
@@ -108,7 +108,7 @@ class _CategoryPageState extends State<CategoryPage> {
                             child: Center(
                               child: Text(
                                 "${listKategori[index]}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.white,
@@ -116,7 +116,7 @@ class _CategoryPageState extends State<CategoryPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           active == index
                               ? Container(
                                   height: 4,
@@ -136,9 +136,9 @@ class _CategoryPageState extends State<CategoryPage> {
               height: 3,
               color: Color(0xFFE0E0E0),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: bodyCategory[active],
             ),
           ],

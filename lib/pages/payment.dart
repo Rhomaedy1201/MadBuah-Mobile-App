@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:project_madbuah/widgets/loading.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/controller/controll.dart';
 import '/http/networks.dart';
@@ -28,6 +30,8 @@ class Payment extends StatefulWidget {
 class _PaymentState extends State<Payment> {
   WhatsApp whatsapp = WhatsApp();
   int phoneNumber = 6285259822974;
+
+  bool isLoading = false;
 
   File? image;
 
@@ -56,6 +60,8 @@ class _PaymentState extends State<Payment> {
         },
         title: "Warning!",
       );
+    } else {
+      log("upload gambar dibatalkan");
     }
     _getTransaksi();
     _getPembayaran();
@@ -66,6 +72,10 @@ class _PaymentState extends State<Payment> {
   // update bukti Pembayaran
   GetConnect connect = GetConnect();
   Future<void> updateBuktiPembayaran() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       Uint8List imageBytes = await image!.readAsBytesSync();
       final form = FormData({
@@ -75,20 +85,34 @@ class _PaymentState extends State<Payment> {
       final response = await connect.post(
           '${network.update_bukti_pembayaran}?id_transaksi=${widget.id_transaksi}&id_user=${widget.id_user}',
           form);
-      print(response.body);
+      // print(response.body);
     } catch (e) {
       print(e.toString());
     }
-    setState(() {});
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // update status transaksi
   Future<void> updateStatusTransaksi() async {
-    Uri url = Uri.parse(
-        "${network.update_status_transaksi}?status=Sudah dibayar&id_transaksi=${widget.id_transaksi}");
-    var response = await http.put(url);
-    print(response.body);
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Uri url = Uri.parse(
+          "${network.update_status_transaksi}?status=Sudah dibayar&id_transaksi=${widget.id_transaksi}");
+      var response = await http.put(url);
+      print(response.body);
+    } catch (e) {
+      log(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // mangambil data transaksi
@@ -96,27 +120,45 @@ class _PaymentState extends State<Payment> {
   int? getCode;
   num? no_telp;
   Future<void> _getTransaksi() async {
-    Uri url = Uri.parse(
-        "${network.get_transaksi}?id_transaksi=${widget.id_transaksi}&id_user=${widget.id_user}");
-    var response = await http.get(url);
-    var cek = jsonDecode(response.body);
-    result = cek['result'];
-    no_telp = num.parse(result[0]['users']['no_telp']);
-    getCode = cek['code'];
-    setState(() {});
-    print(result);
-  }
+    setState(() {
+      isLoading = true;
+    });
 
-  bool loading = false;
+    try {
+      Uri url = Uri.parse(
+          "${network.get_transaksi}?id_transaksi=${widget.id_transaksi}&id_user=${widget.id_user}");
+      var response = await http.get(url);
+      var cek = jsonDecode(response.body);
+      result = cek['result'];
+      no_telp = num.parse(result[0]['users']['no_telp']);
+      getCode = cek['code'];
+    } catch (e) {
+      log(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   // mengambil data pembayaran
   List resultPayment = [];
   Future<void> _getPembayaran() async {
-    Uri url = Uri.parse("${network.get_metode_pembayaran}");
-    var response = await http.get(url);
-    resultPayment = jsonDecode(response.body)['result'];
-    // print(resultPayment);
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Uri url = Uri.parse("${network.get_metode_pembayaran}");
+      var response = await http.get(url);
+      resultPayment = jsonDecode(response.body)['result'];
+    } catch (e) {
+      log(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void launchWhatsapp({@required number, @required message}) async {
@@ -130,28 +172,14 @@ class _PaymentState extends State<Payment> {
   void initState() {
     _getTransaksi();
     _getPembayaran();
-    print("${widget.id_transaksi} | ${widget.id_user}");
-    Timer(
-      Duration(seconds: 1),
-      () {
-        setState(() {
-          loading = true;
-        });
-      },
-    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return (loading == false)
-        ? Scaffold(
-            body: Center(
-              child: Container(
-                width: 250,
-                child: Lottie.asset('assets/lottie/loading.json'),
-              ),
-            ),
+    return isLoading
+        ? const Scaffold(
+            body: LoadingWidget(),
           )
         : Scaffold(
             appBar: AppBar(
@@ -225,7 +253,7 @@ class _PaymentState extends State<Payment> {
                           "Rp ${NumberFormat('#,###').format(result[0]['transaksi']['total_pembayaran'])}"
                               .replaceAll(",", "."),
                           // "Rp",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF565656),

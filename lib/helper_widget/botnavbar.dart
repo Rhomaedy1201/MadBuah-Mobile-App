@@ -40,20 +40,17 @@ class _NavbarState extends State<Navbar> {
       body: [
         DashboardPage(id_user: widget.id_user),
         OrderPage(id_user: widget.id_user),
-        // CategoryPage(),
         ProfilePage(id_user: widget.id_user),
       ].elementAt(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: 'Pesanan'),
-          // BottomNavigationBarItem(
-          //     icon: Icon(Icons.category), label: 'Kategori'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
         currentIndex: _currentIndex,
-        selectedItemColor: Color(0xffF5591F),
+        selectedItemColor: const Color(0xffF5591F),
         unselectedItemColor: Colors.grey,
         onTap: _changeItem,
       ),

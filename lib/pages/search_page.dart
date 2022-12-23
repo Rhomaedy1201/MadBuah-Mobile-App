@@ -18,12 +18,12 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Color(0xFFFFC085),
-        iconTheme: IconThemeData(
+        backgroundColor: const Color(0xFFFFC085),
+        iconTheme: const IconThemeData(
           color: Color(0xffF2861E),
         ),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Cari Produk",
           style: TextStyle(
             fontSize: 16,
@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               child: TextField(
                 onSubmitted: (value) {
                   Get.to(SearchResults(
@@ -58,18 +58,18 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
+              margin: const EdgeInsets.only(left: 10, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Pencarian Terdahulu',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       'Hapus Pencarian',
                       style: TextStyle(color: Color(0xffF2861E)),
                     ),
@@ -85,7 +85,7 @@ class _SearchPageState extends State<SearchPage> {
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    return Card(
+                    return const Card(
                       child: ListTile(
                         title: Text('Apel'),
                         trailing: Icon(Icons.arrow_forward_ios),

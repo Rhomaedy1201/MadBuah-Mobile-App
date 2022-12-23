@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:project_madbuah/http/networks.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_madbuah/pages/payment.dart';
+import 'package:project_madbuah/widgets/loading.dart';
 import 'package:quickalert/quickalert.dart';
 
 class DetailPesanan extends StatefulWidget {
@@ -19,60 +21,68 @@ class DetailPesanan extends StatefulWidget {
 }
 
 class _DetailPesananState extends State<DetailPesanan> {
-  bool loading = false;
+  bool isLoading = false;
   Networks network = Networks();
 
   List result = [];
   int? getCode;
   String? status;
   Future<void> _getTransaksi() async {
-    Uri url = Uri.parse(
-        "${network.get_transaksi}?id_transaksi=${widget.id_transaksi}&id_user=${widget.id_user}");
-    var response = await http.get(url);
-    var cek = jsonDecode(response.body);
-    result = cek['result'];
-    getCode = cek['code'];
-    // print(result);
-    status = result[0]['transaksi']['status'];
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Uri url = Uri.parse(
+          "${network.get_transaksi}?id_transaksi=${widget.id_transaksi}&id_user=${widget.id_user}");
+      var response = await http.get(url);
+      var cek = jsonDecode(response.body);
+      result = cek['result'];
+      getCode = cek['code'];
+      status = result[0]['transaksi']['status'];
+    } catch (e) {
+      log(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // update status transaksi
   Future<void> updateStatusTransaksi() async {
-    Uri url = Uri.parse(
-        "${network.update_status_transaksi}?status=Pesanan Selesai&id_transaksi=${widget.id_transaksi}");
-    var response = await http.put(url);
-    print(response.body);
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Uri url = Uri.parse(
+          "${network.update_status_transaksi}?status=Pesanan Selesai&id_transaksi=${widget.id_transaksi}");
+      var response = await http.put(url);
+      print(response.body);
+    } catch (e) {
+      log(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   void initState() {
     _getTransaksi();
-    Timer(
-      const Duration(seconds: 3),
-      () {
-        setState(() {
-          loading = true;
-        });
-      },
-    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return (loading == false)
-        ? Scaffold(
-            body: Center(
-              child: Container(
-                width: 250,
-                child: Lottie.asset('assets/lottie/loading.json'),
-              ),
-            ),
+    return isLoading
+        ? const Scaffold(
+            body: LoadingWidget(),
           )
         : Scaffold(
-            backgroundColor: Color(0xFFF3F3F3),
+            backgroundColor: const Color(0xFFF3F3F3),
             bottomNavigationBar: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: ElevatedButton(

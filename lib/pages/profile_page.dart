@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project_madbuah/widgets/loading.dart';
 import '/http/networks.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +20,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isLoading = false;
   Networks network = Networks();
 
   void removeLogin() {
@@ -43,12 +46,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Map<String, dynamic> result = {};
   Future<void> _getUser() async {
-    Uri url = Uri.parse("${network.get_user}?id_user=${widget.id_user}");
-    var response = await http.get(url);
     setState(() {
-      result = jsonDecode(response.body);
+      isLoading = true;
     });
-    print(result['result'][0]['status']);
+    try {
+      Uri url = Uri.parse("${network.get_user}?id_user=${widget.id_user}");
+      var response = await http.get(url);
+      setState(() {
+        result = jsonDecode(response.body);
+      });
+      print(result['result'][0]['status']);
+    } catch (e) {
+      log(e.toString());
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -60,110 +73,115 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("refresh");
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFFFFC085),
-        iconTheme: const IconThemeData(
-          color: Color(0xffF2861E),
-        ),
-        centerTitle: true,
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xffF2861E),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: RefreshIndicator(
-            onRefresh: () async {
-              _getUser();
-            },
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: result.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Color(0xFFCCB9A8),
-                      child: Icon(
-                        Icons.person,
-                        size: 55,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    (result['result'][0]['status'] == "admin")
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${result['result'][index]['fullname']}',
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const Icon(
-                                Icons.check_circle_rounded,
-                                size: 20,
-                                color: Color(0xFF005CE7),
-                              )
-                            ],
-                          )
-                        : Text(
-                            '${result['result'][index]['fullname']}',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                    Text(
-                      '${result['result'][index]['email']}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    const Divider(),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    ProfileMenuWidget(
-                      title: "Akun Saya",
-                      icon: Icons.person,
-                      onPress: () {
-                        Get.to(EditProfilePage(
-                          id_user: widget.id_user,
-                        ));
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    ProfileMenuWidget(
-                      title: "Keluar",
-                      icon: Icons.logout_outlined,
-                      textColor: Colors.red,
-                      onPress: () {
-                        removeLogin();
-                      },
-                    ),
-                  ],
-                );
-              },
+    return isLoading
+        ? const Scaffold(
+            body: LoadingWidget(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: const Color(0xFFFFC085),
+              iconTheme: const IconThemeData(
+                color: Color(0xffF2861E),
+              ),
+              centerTitle: true,
+              title: const Text(
+                "Profile",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xffF2861E),
+                ),
+              ),
             ),
-          )),
-    );
+            body: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    _getUser();
+                  },
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: result.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Color(0xFFCCB9A8),
+                            child: Icon(
+                              Icons.person,
+                              size: 55,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          (result['result'][0]['status'] == "admin")
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${result['result'][index]['fullname']}',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 20,
+                                      color: Color(0xFF005CE7),
+                                    )
+                                  ],
+                                )
+                              : Text(
+                                  '${result['result'][index]['fullname']}',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                          Text(
+                            '${result['result'][index]['email']}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          const Divider(),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          ProfileMenuWidget(
+                            title: "Akun Saya",
+                            icon: Icons.person,
+                            onPress: () {
+                              Get.to(EditProfilePage(
+                                id_user: widget.id_user,
+                              ));
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          ProfileMenuWidget(
+                            title: "Keluar",
+                            icon: Icons.logout_outlined,
+                            textColor: Colors.red,
+                            onPress: () {
+                              removeLogin();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                )),
+          );
   }
 }
 

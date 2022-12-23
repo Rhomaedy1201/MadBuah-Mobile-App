@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:project_madbuah/widgets/loading.dart';
 import '/http/networks.dart';
 import '/pages/detail_pesanan.dart';
 import 'package:http/http.dart' as http;
@@ -19,44 +21,40 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
-  bool loading = false;
+  bool isLoading = false;
   Networks network = Networks();
 
   List result = [];
   int? getCode;
   Future<void> _getTransaksi() async {
-    Uri url = Uri.parse("${network.get_transaksi}?id_user=${widget.id_user}");
-    var response = await http.get(url);
-    var cek = jsonDecode(response.body);
-    result = cek['result'];
-    getCode = cek['code'];
-    // print(result);
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      Uri url = Uri.parse("${network.get_transaksi}?id_user=${widget.id_user}");
+      var response = await http.get(url);
+      var cek = jsonDecode(response.body);
+      result = cek['result'];
+      getCode = cek['code'];
+    } catch (e) {
+      log(e.toString());
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   void initState() {
     _getTransaksi();
-    Timer(
-      Duration(seconds: 2),
-      () {
-        setState(() {
-          loading = true;
-        });
-      },
-    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return (loading == false)
-        ? Scaffold(
-            body: Center(
-              child: Container(
-                width: 250,
-                child: Lottie.asset('assets/lottie/loading.json'),
-              ),
-            ),
+    return isLoading
+        ? const Scaffold(
+            body: LoadingWidget(),
           )
         : Scaffold(
             backgroundColor: Color(0xFFF0F0F0),
