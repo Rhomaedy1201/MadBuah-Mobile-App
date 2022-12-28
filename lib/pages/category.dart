@@ -19,7 +19,7 @@ class _CategoryPageState extends State<CategoryPage> {
   ];
 
   List<Widget> bodyCategory = [
-    const AllCategory(),
+    AllCategory(),
     CategoryOne(),
     CategoryTwo(),
   ];

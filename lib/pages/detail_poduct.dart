@@ -45,10 +45,11 @@ class _DetailProductState extends State<DetailProduct> {
     });
   }
 
+  bool loadingUser = false;
   Map<String, dynamic> result = {};
   Future<void> _getUser() async {
     setState(() {
-      isLoading = true;
+      loadingUser = true;
     });
 
     try {
@@ -61,7 +62,7 @@ class _DetailProductState extends State<DetailProduct> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingUser = false;
     });
   }
 
@@ -69,6 +70,7 @@ class _DetailProductState extends State<DetailProduct> {
   void initState() {
     getProduk();
     _getUser();
+    print(widget.id_user);
     super.initState();
   }
 
@@ -79,73 +81,83 @@ class _DetailProductState extends State<DetailProduct> {
             body: LoadingWidget(),
           )
         : Scaffold(
-            bottomNavigationBar: Container(
-              width: double.infinity,
-              height: 80,
-              padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 25),
-              child: ElevatedButton(
-                onPressed: () {
-                  (result['result'][0]['status'] == "admin")
-                      ? QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.warning,
-                          text:
-                              'Anda sebagai penjual,\ntidak bisa melakukan transaksi!',
-                          confirmBtnText: "Iya",
-                          confirmBtnColor: const Color(0xffF2861E),
-                          onConfirmBtnTap: () async {
-                            Get.back();
+            bottomNavigationBar: ListView.builder(
+              shrinkWrap: true,
+              itemCount: result.length,
+              itemBuilder: (context, index) {
+                return loadingUser
+                    ? const LoadingWidget()
+                    : Container(
+                        width: double.infinity,
+                        height: 80,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 13, horizontal: 25),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            (result['result'][index]['status'] == "admin")
+                                ? QuickAlert.show(
+                                    context: context,
+                                    type: QuickAlertType.warning,
+                                    text:
+                                        'Anda sebagai penjual,\ntidak bisa melakukan transaksi!',
+                                    confirmBtnText: "Iya",
+                                    confirmBtnColor: const Color(0xffF2861E),
+                                    onConfirmBtnTap: () async {
+                                      Get.back();
+                                    },
+                                    title: "Warning!",
+                                  )
+                                : Get.to(CheckoutPage(
+                                    id_produk: widget.id_produk,
+                                    qty: jml.toInt(),
+                                  ));
                           },
-                          title: "Warning!",
-                        )
-                      : Get.to(CheckoutPage(
-                          id_produk: widget.id_produk,
-                          qty: jml.toInt(),
-                        ));
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffF2861E),
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    )),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    // color: Color(0xffF2861E),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xffF2861E),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              )),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            decoration: BoxDecoration(
+                              // color: Color(0xffF2861E),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: const Icon(
+                                    Icons.navigate_next_rounded,
+                                    size: 40,
+                                    color: Color(0xffF2861E),
+                                  ),
+                                ),
+                                Text(
+                                  "Beli Sekarang".toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Container(
+                                  width: 35,
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.navigate_next_rounded,
-                          size: 40,
-                          color: Color(0xffF2861E),
-                        ),
-                      ),
-                      Text(
-                        "Beli Sekarang".toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Container(
-                        width: 35,
-                      )
-                    ],
-                  ),
-                ),
-              ),
+                      );
+              },
             ),
             appBar: AppBar(
               elevation: 0,
