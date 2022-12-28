@@ -290,42 +290,48 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 14),
-                      color: const Color(0xFFFFFFFF),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${listUser[0]['fullname']}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff727272),
-                            ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: listUser.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 14),
+                          color: const Color(0xFFFFFFFF),
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${listUser[index]['fullname']}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff727272),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "+(62) ${listUser[index]['no_telp']}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff727272),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "${alamat}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff727272),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            "+(62) ${listUser[0]['no_telp']}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff727272),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            "${alamat}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff727272),
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(

@@ -95,10 +95,11 @@ class _PaymentState extends State<Payment> {
     });
   }
 
+  bool loadingUpdateStatus = false;
   // update status transaksi
   Future<void> updateStatusTransaksi() async {
     setState(() {
-      isLoading = true;
+      loadingUpdateStatus = true;
     });
 
     try {
@@ -111,17 +112,18 @@ class _PaymentState extends State<Payment> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingUpdateStatus = false;
     });
   }
 
+  bool loadingGetTransaksi = false;
   // mangambil data transaksi
   List result = [];
   int? getCode;
   num? no_telp;
   Future<void> _getTransaksi() async {
     setState(() {
-      isLoading = true;
+      loadingGetTransaksi = true;
     });
 
     try {
@@ -137,15 +139,16 @@ class _PaymentState extends State<Payment> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingGetTransaksi = false;
     });
   }
 
+  bool loadingGetPay = false;
   // mengambil data pembayaran
   List resultPayment = [];
   Future<void> _getPembayaran() async {
     setState(() {
-      isLoading = true;
+      loadingGetPay = true;
     });
 
     try {
@@ -157,7 +160,7 @@ class _PaymentState extends State<Payment> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingGetPay = false;
     });
   }
 
@@ -177,7 +180,7 @@ class _PaymentState extends State<Payment> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    return loadingGetPay
         ? const Scaffold(
             body: LoadingWidget(),
           )
@@ -207,69 +210,80 @@ class _PaymentState extends State<Payment> {
               },
               child: ListView(
                 children: [
-                  (result[0]['transaksi']['bukti_pembayaran'] == "")
-                      ? Container()
-                      : Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 17, vertical: 10),
-                          color: const Color(0xFF1EBA8E),
-                          child: Row(
-                            children: const [
-                              Icon(
-                                Icons.credit_score_rounded,
-                                size: 23,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                "Pembayaran Berhasil!",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: result.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (result[index]['transaksi']['bukti_pembayaran'] == "")
+                              ? Container()
+                              : Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 17, vertical: 10),
+                                  color: const Color(0xFF1EBA8E),
+                                  child: Row(
+                                    children: const [
+                                      Icon(
+                                        Icons.credit_score_rounded,
+                                        size: 23,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Pembayaran Berhasil!",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 13,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Total yang harus dibayar : ",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF565656),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  "Rp ${NumberFormat('#,###').format(result[index]['transaksi']['total_pembayaran'])}"
+                                      .replaceAll(",", "."),
+                                  // "Rp",
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF565656),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                const Text(
+                                  "*Belum termasuk ongkos kirim",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFF565656),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 13,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Total yang harus dibayar : ",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          "Rp ${NumberFormat('#,###').format(result[0]['transaksi']['total_pembayaran'])}"
-                              .replaceAll(",", "."),
-                          // "Rp",
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          "*Belum termasuk ongkos kirim",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      );
+                    },
                   ),
                   Container(
                     width: double.infinity,
@@ -277,51 +291,58 @@ class _PaymentState extends State<Payment> {
                     color: Color(0xFFF5E2D0),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 13,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Metode Pembayaran :",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          "${resultPayment[0]['nama_pembayaran']}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          "No.Rek : ${resultPayment[0]['no_rekening']}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          "Nama : ${resultPayment[0]['nama_pemilik']}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 13,
+                      ),
+                      child: loadingGetPay
+                          ? const LoadingWidget()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: resultPayment.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Metode Pembayaran :",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF565656),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      "${resultPayment[index]['nama_pembayaran']}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF565656),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      "No.Rek : ${resultPayment[index]['no_rekening']}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF565656),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      "Nama : ${resultPayment[index]['nama_pemilik']}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF565656),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            )),
                   Container(
                     width: double.infinity,
                     height: 3,
@@ -329,106 +350,136 @@ class _PaymentState extends State<Payment> {
                   ),
                   const SizedBox(height: 10),
                   Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 5),
-                        const Text(
-                          "Bukti Pembayaran",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF565656),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        InkWell(
-                          onTap: () async {
-                            getImage();
-                            _getPembayaran();
-                            _getTransaksi();
-                          },
-                          child: Container(
-                            width: 170,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE7E7E7),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: (result[0]['transaksi']
-                                        ['bukti_pembayaran'] !=
-                                    "")
-                                ? image != null
-                                    ? Image.file(
-                                        image!,
-                                        fit: BoxFit.contain,
-                                      )
-                                    : Image(
-                                        image: MemoryImage(base64Decode(
-                                            result[0]['transaksi']
-                                                ['bukti_pembayaran'])),
-                                      )
-                                : image != null
-                                    ? Image.file(
-                                        image!,
-                                        fit: BoxFit.contain,
-                                      )
-                                    : const Icon(
-                                        Icons.add_photo_alternate_outlined,
-                                        size: 55,
-                                        color: Color(0xFF7D7D7D),
+                      child: loadingGetTransaksi
+                          ? const LoadingWidget()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: result.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 5),
+                                    const Text(
+                                      "Bukti Pembayaran",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF565656),
                                       ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xffF2861E),
-                        ),
-                        onPressed: () async {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String? lastValueId =
-                              await Controller1.getCheckIdUser();
-                          String? currentId = lastValueId as String?;
-                          setState(() {});
-                          Get.offAll(Navbar(
-                            id_user: currentId,
-                          ));
-                        },
-                        child:
-                            (result[0]['transaksi']['bukti_pembayaran'] == "")
-                                ? const Text("Kembali dan Upload Nanti")
-                                : const Text("Kembali ke halaman utama"),
-                      ),
-                      (result[0]['transaksi']['bukti_pembayaran'] == "")
-                          ? Container()
-                          : ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF1CC127),
-                              ),
-                              onPressed: () async {
-                                launchWhatsapp(
-                                    number: 6282131802740,
-                                    message: "Hallo gan\nsaya sudah melakukan order dan pembayaran dengan\nNo Transaksi : MD-${result[0]['id_transaksi']}" +
-                                        "\n" +
-                                        "Nama Barang : " +
-                                        "${result[0]['produk'][0]['nama_produk']}" +
-                                        "\nJumlah : ${result[0]['detail_transaksi']['qty']}\nTotal : Rp${NumberFormat('#,###').format(result[0]['detail_transaksi']['total'])}"
-                                            .replaceAll(",", ".") +
-                                        "\nKe Rekening : ${resultPayment[0]['nama_pembayaran']}" +
-                                        "\nNo : ${resultPayment[0]['no_rekening']}" +
-                                        "\nNama : ${resultPayment[0]['nama_pemilik']}");
+                                    ),
+                                    const SizedBox(height: 15),
+                                    InkWell(
+                                      onTap: () async {
+                                        getImage();
+                                        _getPembayaran();
+                                        _getTransaksi();
+                                      },
+                                      child: Container(
+                                        width: 170,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFE7E7E7),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: (result[index]['transaksi']
+                                                    ['bukti_pembayaran'] !=
+                                                "")
+                                            ? image != null
+                                                ? Image.file(
+                                                    image!,
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : Image(
+                                                    image: MemoryImage(
+                                                        base64Decode(result[
+                                                                    index]
+                                                                ['transaksi'][
+                                                            'bukti_pembayaran'])),
+                                                  )
+                                            : image != null
+                                                ? Image.file(
+                                                    image!,
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : const Icon(
+                                                    Icons
+                                                        .add_photo_alternate_outlined,
+                                                    size: 55,
+                                                    color: Color(0xFF7D7D7D),
+                                                  ),
+                                      ),
+                                    )
+                                  ],
+                                );
                               },
-                              child: const Text("Chat Penjual"),
-                            )
-                    ],
-                  )
+                            )),
+                  const SizedBox(height: 10),
+                  loadingGetTransaksi
+                      ? const LoadingWidget()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: result.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xffF2861E),
+                                  ),
+                                  onPressed: () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    String? lastValueId =
+                                        await Controller1.getCheckIdUser();
+                                    String? currentId = lastValueId as String?;
+                                    setState(() {});
+                                    Get.offAll(Navbar(
+                                      id_user: currentId,
+                                    ));
+                                  },
+                                  child: (result[index]['transaksi']
+                                              ['bukti_pembayaran'] ==
+                                          "")
+                                      ? const Text("Kembali dan Upload Nanti")
+                                      : const Text("Kembali ke halaman utama"),
+                                ),
+                                (result[index]['transaksi']
+                                            ['bukti_pembayaran'] ==
+                                        "")
+                                    ? Container()
+                                    : ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: resultPayment.length,
+                                        itemBuilder: (context, indexPay) {
+                                          return ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Color(0xFF1CC127),
+                                            ),
+                                            onPressed: () async {
+                                              launchWhatsapp(
+                                                  number: 6282131802740,
+                                                  message: "Hallo gan\nsaya sudah melakukan order dan pembayaran dengan\nNo Transaksi : MD-${result[0]['id_transaksi']}" +
+                                                      "\n" +
+                                                      "Nama Barang : " +
+                                                      "${result[index]['produk'][0]['nama_produk']}" +
+                                                      "\nJumlah : ${result[index]['detail_transaksi']['qty']}\nTotal : Rp${NumberFormat('#,###').format(result[0]['detail_transaksi']['total'])}"
+                                                          .replaceAll(
+                                                              ",", ".") +
+                                                      "\nKe Rekening : ${resultPayment[indexPay]['nama_pembayaran']}" +
+                                                      "\nNo : ${resultPayment[indexPay]['no_rekening']}" +
+                                                      "\nNama : ${resultPayment[indexPay]['nama_pemilik']}");
+                                            },
+                                            child: const Text("Chat Penjual"),
+                                          );
+                                        },
+                                      )
+                              ],
+                            );
+                          },
+                        )
                 ],
               ),
             ),
