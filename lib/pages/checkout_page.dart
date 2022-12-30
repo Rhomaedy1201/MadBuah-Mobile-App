@@ -498,8 +498,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ),
                               ),
                               Text(
-                                "Rp${NumberFormat('#,###').format(harga)}"
-                                    .replaceAll(",", "."),
+                                "Rp${harga}",
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w400,
@@ -522,8 +521,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ),
                               ),
                               Text(
-                                "Rp${NumberFormat('#,###').format(harga)}"
-                                    .replaceAll(",", "."),
+                                "Rp${harga}",
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
