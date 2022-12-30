@@ -259,7 +259,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 label: const Text('No Telp'),
                                 floatingLabelStyle:
                                     const TextStyle(color: Color(0xffF5591F)),
-                                prefixIcon: const Icon(Icons.lock),
+                                prefixIcon: const Icon(Icons.phone),
                                 prefixIconColor: const Color(0xffF5591F),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(100),
@@ -279,7 +279,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               label: const Text('Alamat'),
                               floatingLabelStyle:
                                   TextStyle(color: Color(0xffF5591F)),
-                              prefixIcon: const Icon(Icons.maps_home_work),
+                              prefixIcon: const Icon(Icons.location_history),
                               prefixIconColor: const Color(0xffF5591F),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(100),

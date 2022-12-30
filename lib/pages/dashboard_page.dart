@@ -30,7 +30,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<String> imgList = [
     'assets/bg/bg4.webp',
-    'assets/bg/bg1.jpeg',
     'assets/bg/bg2.jpeg',
     'assets/bg/bg3.jpeg',
   ];

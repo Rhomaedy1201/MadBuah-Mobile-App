@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:project_madbuah/controller/controll.dart';
 import 'package:project_madbuah/widgets/loading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/pages/checkout_page.dart';
 import 'package:quickalert/quickalert.dart';
 import '/http/networks.dart';
@@ -45,6 +47,7 @@ class _DetailProductState extends State<DetailProduct> {
     });
   }
 
+  String? currentId;
   bool loadingUser = false;
   Map<String, dynamic> result = {};
   Future<void> _getUser() async {
@@ -53,10 +56,16 @@ class _DetailProductState extends State<DetailProduct> {
     });
 
     try {
-      Uri url = Uri.parse("${network.get_user}?id_user=${widget.id_user}");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? lastValueId = await Controller1.getCheckIdUser();
+      setState(() {
+        currentId = lastValueId as String?;
+      });
+      Uri url = Uri.parse("${network.get_user}?id_user=${currentId}");
       var response = await http.get(url);
       result = jsonDecode(response.body);
       print(result['result'][0]['status']);
+      print(currentId);
     } catch (e) {
       log(e.toString());
     }
@@ -70,7 +79,6 @@ class _DetailProductState extends State<DetailProduct> {
   void initState() {
     getProduk();
     _getUser();
-    print(widget.id_user);
     super.initState();
   }
 
@@ -110,6 +118,7 @@ class _DetailProductState extends State<DetailProduct> {
                                 : Get.to(CheckoutPage(
                                     id_produk: widget.id_produk,
                                     qty: jml.toInt(),
+                                    idUser: currentId,
                                   ));
                           },
                           style: ElevatedButton.styleFrom(

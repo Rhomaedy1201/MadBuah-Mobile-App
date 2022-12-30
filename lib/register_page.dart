@@ -250,7 +250,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.blueGrey,
                           ),
                           suffixIcon: Icon(
-                            Icons.lock,
+                            Icons.location_history,
                             color: Color(0xffF5591F),
                           ),
                           border: OutlineInputBorder(
@@ -274,7 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.blueGrey,
                           ),
                           suffixIcon: Icon(
-                            Icons.lock,
+                            Icons.phone,
                             color: Color(0xffF5591F),
                           ),
                           border: OutlineInputBorder(

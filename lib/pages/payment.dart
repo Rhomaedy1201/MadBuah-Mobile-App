@@ -104,7 +104,7 @@ class _PaymentState extends State<Payment> {
 
     try {
       Uri url = Uri.parse(
-          "${network.update_status_transaksi}?status=Sudah dibayar&id_transaksi=${widget.id_transaksi}");
+          "${network.update_status_transaksi}?status=Sedang diposes&id_transaksi=${widget.id_transaksi}");
       var response = await http.put(url);
       print(response.body);
     } catch (e) {
@@ -213,6 +213,7 @@ class _PaymentState extends State<Payment> {
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: result.length,
+                    physics: ClampingScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,6 +301,7 @@ class _PaymentState extends State<Payment> {
                           : ListView.builder(
                               shrinkWrap: true,
                               itemCount: resultPayment.length,
+                              physics: ClampingScrollPhysics(),
                               itemBuilder: (context, index) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,6 +357,7 @@ class _PaymentState extends State<Payment> {
                           : ListView.builder(
                               shrinkWrap: true,
                               itemCount: result.length,
+                              physics: ClampingScrollPhysics(),
                               itemBuilder: (context, index) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -421,6 +424,7 @@ class _PaymentState extends State<Payment> {
                       : ListView.builder(
                           shrinkWrap: true,
                           itemCount: result.length,
+                          physics: ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
                             return Column(
                               children: [
@@ -452,27 +456,41 @@ class _PaymentState extends State<Payment> {
                                     : ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: resultPayment.length,
+                                        physics: ClampingScrollPhysics(),
                                         itemBuilder: (context, indexPay) {
-                                          return ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Color(0xFF1CC127),
+                                          return Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 95,
                                             ),
-                                            onPressed: () async {
-                                              launchWhatsapp(
-                                                  number: 6282131802740,
-                                                  message: "Hallo gan\nsaya sudah melakukan order dan pembayaran dengan\nNo Transaksi : MD-${result[0]['id_transaksi']}" +
-                                                      "\n" +
-                                                      "Nama Barang : " +
-                                                      "${result[index]['produk'][0]['nama_produk']}" +
-                                                      "\nJumlah : ${result[index]['detail_transaksi']['qty']}\nTotal : Rp${NumberFormat('#,###').format(result[0]['detail_transaksi']['total'])}"
-                                                          .replaceAll(
-                                                              ",", ".") +
-                                                      "\nKe Rekening : ${resultPayment[indexPay]['nama_pembayaran']}" +
-                                                      "\nNo : ${resultPayment[indexPay]['no_rekening']}" +
-                                                      "\nNama : ${resultPayment[indexPay]['nama_pemilik']}");
-                                            },
-                                            child: const Text("Chat Penjual"),
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Color(0xFF1CC127),
+                                              ),
+                                              onPressed: () async {
+                                                launchWhatsapp(
+                                                    number: 6282131802740,
+                                                    message: "Hallo gan\nsaya sudah melakukan order dan pembayaran dengan\nNo Transaksi : MD-${result[0]['id_transaksi']}" +
+                                                        "\n" +
+                                                        "Nama Barang : " +
+                                                        "${result[index]['produk'][0]['nama_produk']}" +
+                                                        "\nJumlah : ${result[index]['detail_transaksi']['qty']}\nTotal : Rp${NumberFormat('#,###').format(result[0]['detail_transaksi']['total'])}"
+                                                            .replaceAll(
+                                                                ",", ".") +
+                                                        "\nKe Rekening : ${resultPayment[indexPay]['nama_pembayaran']}" +
+                                                        "\nNo : ${resultPayment[indexPay]['no_rekening']}" +
+                                                        "\nNama : ${resultPayment[indexPay]['nama_pemilik']}");
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: const [
+                                                  Icon(Icons.whatsapp),
+                                                  SizedBox(width: 5),
+                                                  Text("Chat Penjual"),
+                                                ],
+                                              ),
+                                            ),
                                           );
                                         },
                                       )

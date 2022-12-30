@@ -14,9 +14,10 @@ import '/pages/payment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckoutPage extends StatefulWidget {
-  var id_produk;
+  var id_produk, idUser;
   int? qty;
-  CheckoutPage({Key? key, this.id_produk, this.qty}) : super(key: key);
+  CheckoutPage({Key? key, this.id_produk, this.qty, this.idUser})
+      : super(key: key);
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -233,8 +234,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             color: Color(0xff727272)),
                       ),
                       Text(
-                        "Rp${NumberFormat('#,###').format(harga)}"
-                            .replaceAll(",", "."),
+                        "Rp${harga}",
                         // "",
                         style: const TextStyle(
                             fontSize: 17,
@@ -398,8 +398,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                       ),
                                       const SizedBox(height: 3),
                                       Text(
-                                        "Rp${NumberFormat('#,###').format(listProduk[index]['harga'])}"
-                                            .replaceAll(",", "."),
+                                        "Rp${listProduk[index]['harga']}",
                                         // "",
                                         style: const TextStyle(
                                           fontSize: 14,
