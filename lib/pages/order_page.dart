@@ -117,6 +117,7 @@ class _OrderPageState extends State<OrderPage> {
                           child: GridView.builder(
                             shrinkWrap: true,
                             itemCount: result.length,
+                            reverse: true,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 1,

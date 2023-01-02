@@ -303,7 +303,7 @@ class _DetailPesananState extends State<DetailPesanan> {
                               ],
                             ),
                             Text(
-                              "${result.length}x",
+                              "${result[index]['detail_transaksi']['qty']}x",
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,

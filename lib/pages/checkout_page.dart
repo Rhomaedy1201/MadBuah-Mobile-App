@@ -59,12 +59,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
   }
 
+  bool loadingProduk = false;
   Map<String, dynamic> resultProduk = {};
   List listProduk = [];
   int? harga;
   Future<void> getProduk() async {
     setState(() {
-      isLoading = true;
+      loadingProduk = true;
     });
 
     try {
@@ -79,14 +80,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingProduk = false;
     });
   }
 
+  bool loadingIdTrans = false;
   var idTrans;
   Future<void> TransaksiId() async {
     setState(() {
-      isLoading = true;
+      loadingIdTrans = true;
     });
 
     try {
@@ -100,14 +102,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingIdTrans = false;
     });
   }
 
+  bool loadingPay = false;
   List resultPayment = [];
   Future<void> _getPembayaran() async {
     setState(() {
-      isLoading = true;
+      loadingPay = true;
     });
 
     try {
@@ -120,15 +123,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     setState(() {
-      isLoading = false;
+      loadingPay = false;
     });
   }
 
   Future<void> _postTransaksi() async {
-    setState(() {
-      isLoading = true;
-    });
-
     try {
       DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
       String tanggal_beli = dateFormat.format(DateTime.now());
@@ -160,17 +159,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     } catch (e) {
       log(e.toString());
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<void> _postDetailTransaksi() async {
-    setState(() {
-      isLoading = true;
-    });
-
     try {
       Uri url = Uri.parse("${network.post_detail_transaksi}");
       var data = {
@@ -184,10 +175,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     } catch (e) {
       log(e.toString());
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -271,278 +258,286 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
             ),
-            body: ListView(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      color: const Color(0xFFEFEFEF),
-                      width: double.infinity,
-                      child: const Text(
-                        "Tujuan",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3C3C3C),
-                        ),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    color: const Color(0xFFEFEFEF),
+                    width: double.infinity,
+                    child: const Text(
+                      "Tujuan",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF3C3C3C),
                       ),
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: listUser.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 14),
-                          color: const Color(0xFFFFFFFF),
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${listUser[index]['fullname']}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff727272),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "+(62) ${listUser[index]['no_telp']}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff727272),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "${alamat}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff727272),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      color: Color(0xFFEFEFEF),
-                      width: double.infinity,
-                      child: const Text(
-                        "Rincian Pesanan",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3C3C3C),
-                        ),
-                      ),
-                    ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      itemCount: 1,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        mainAxisSpacing: 2,
-                        childAspectRatio: 10 / 2.1,
-                      ),
-                      itemBuilder: (context, index) {
-                        return Container(
-                          color: const Color(0xFFFFFFFF),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                  ),
+                  isLoading
+                      ? const LoadingWidget()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: listUser.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 14),
+                              color: const Color(0xFFFFFFFF),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFD8D8D8),
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                          image: MemoryImage(
-                                            base64Decode(listProduk[index]
-                                                ['foto_produk']),
-                                          ),
-                                        )),
+                                  Text(
+                                    "${listUser[index]['fullname']}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff727272),
+                                    ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "+(62) ${listUser[index]['no_telp']}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff727272),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "${alamat}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff727272),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    color: Color(0xFFEFEFEF),
+                    width: double.infinity,
+                    child: const Text(
+                      "Rincian Pesanan",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF3C3C3C),
+                      ),
+                    ),
+                  ),
+                  loadingProduk
+                      ? const LoadingWidget()
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          physics: const ScrollPhysics(),
+                          itemCount: listProduk.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            mainAxisSpacing: 2,
+                            childAspectRatio: 10 / 2.1,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Container(
+                              color: const Color(0xFFFFFFFF),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
                                     children: [
-                                      Text(
-                                        "${listProduk[index]['nama_produk']}",
-                                        // "",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        ),
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                            color: const Color(0xFFD8D8D8),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: MemoryImage(
+                                                base64Decode(listProduk[index]
+                                                    ['foto_produk']),
+                                              ),
+                                            )),
                                       ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        "Rp${listProduk[index]['harga']}",
-                                        // "",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w800,
-                                          color: Color(0xffF2861E),
-                                        ),
-                                      ),
+                                      const SizedBox(width: 8),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${listProduk[index]['nama_produk']}",
+                                            // "",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            "Rp${listProduk[index]['harga']}",
+                                            // "",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                              color: Color(0xffF2861E),
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     ],
+                                  ),
+                                  Text(
+                                    "x${widget.qty}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF656565),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    color: const Color(0xFFEFEFEF),
+                    width: double.infinity,
+                    child: const Text(
+                      "Metode Pembayaran",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF3C3C3C),
+                      ),
+                    ),
+                  ),
+                  loadingPay
+                      ? const LoadingWidget()
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: resultPayment.length,
+                          physics: const ScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            mainAxisSpacing: 1,
+                            childAspectRatio: 10 / 1.3,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Container(
+                              color: const Color(0xFFF9F9F9),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${resultPayment[index]['nama_pembayaran']}",
+                                  ),
+                                  const Icon(
+                                    Icons.check,
+                                    color: Color(0xffF2861E),
                                   )
                                 ],
                               ),
-                              Text(
-                                "x${widget.qty}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF656565),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      color: const Color(0xFFEFEFEF),
-                      width: double.infinity,
-                      child: const Text(
-                        "Metode Pembayaran",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3C3C3C),
+                            );
+                          },
                         ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    color: const Color(0xFFEFEFEF),
+                    width: double.infinity,
+                    child: const Text(
+                      "Ringkasan Pembayaran",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF3C3C3C),
                       ),
                     ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      itemCount: resultPayment.length,
-                      physics: const ScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        mainAxisSpacing: 1,
-                        childAspectRatio: 10 / 1.3,
-                      ),
-                      itemBuilder: (context, index) {
-                        return Container(
-                          color: const Color(0xFFF9F9F9),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "${resultPayment[index]['nama_pembayaran']}",
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 17),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Subtotal produk (${widget.qty} item)",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
                               ),
-                              const Icon(
-                                Icons.check,
-                                color: Color(0xffF2861E),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      color: const Color(0xFFEFEFEF),
-                      width: double.infinity,
-                      child: const Text(
-                        "Ringkasan Pembayaran",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3C3C3C),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 17),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Subtotal produk (${widget.qty} item)",
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                "Rp${harga}",
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(
-                            height: 20,
-                            color: Color(0xffF2861E),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Subtotal Pembayaran",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Text(
-                                "Rp${harga}",
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "*Bukan termasuk ongkos kirim",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff727272),
                             ),
-                          )
-                        ],
-                      ),
+                            Text(
+                              "Rp${harga}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          height: 20,
+                          color: Color(0xffF2861E),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Subtotal Pembayaran",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Rp${harga}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "*Bukan termasuk ongkos kirim",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xff727272),
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           );
   }

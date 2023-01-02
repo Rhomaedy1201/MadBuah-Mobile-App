@@ -56,11 +56,12 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  bool loadingProduk = false;
   Map<String, dynamic> resultProduk = {};
   List listProduk = [];
   Future<void> getProduk() async {
     setState(() {
-      isLoading = true;
+      loadingProduk = true;
     });
     try {
       Uri url = Uri.parse("${network.get_produk}");
@@ -71,17 +72,18 @@ class _DashboardPageState extends State<DashboardPage> {
       log(e.toString());
     }
     setState(() {
-      isLoading = false;
+      loadingProduk = false;
     });
   }
 
+  bool loadingKat = false;
   Map<String, dynamic> resultKategori = {};
   List listKategori = [];
   Future<void> getKategori() async {
-    setState(() {
-      isLoading = true;
-    });
     _getUser();
+    setState(() {
+      loadingKat = true;
+    });
     try {
       Uri url = Uri.parse("${network.get_kategori}");
       var response = await http.get(url);
@@ -91,7 +93,7 @@ class _DashboardPageState extends State<DashboardPage> {
       log(e.toString());
     }
     setState(() {
-      isLoading = false;
+      loadingKat = false;
     });
   }
 
@@ -279,96 +281,102 @@ class _DashboardPageState extends State<DashboardPage> {
                   Container(
                     height: 80,
                     padding: EdgeInsets.symmetric(horizontal: 19),
-                    child: ListView.builder(
-                      itemCount: listKategori.length,
-                      shrinkWrap: false,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Get.to(CategoryPage(
-                                  id_body: index + 1,
-                                ));
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              splashColor: Color(0xffF2861E),
-                              child: Container(
-                                width: 220,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 7),
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFF9F8F8),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0xFFC2C2C2),
-                                      blurRadius: 2,
-                                      offset: Offset(0, 0), // Shadow position
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 55,
-                                      height: 55,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffF2861E),
-                                        borderRadius: BorderRadius.circular(12),
-                                        image: DecorationImage(
-                                          image: MemoryImage(
-                                            base64Decode(listKategori[index]
-                                                ['gambar_kategori']),
-                                          ),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 140,
+                    child: loadingKat
+                        ? const LoadingWidget()
+                        : ListView.builder(
+                            itemCount: listKategori.length,
+                            shrinkWrap: false,
+                            physics: const ScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(CategoryPage(
+                                        id_body: index + 1,
+                                      ));
+                                    },
+                                    borderRadius: BorderRadius.circular(20),
+                                    splashColor: Color(0xffF2861E),
+                                    child: Container(
+                                      width: 220,
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 2),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${listKategori[index]['nama_kategori']}",
-                                            maxLines: 1,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "${listKategori[index]['keterangan_kategori']}",
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xff727272),
-                                            ),
+                                          horizontal: 7, vertical: 7),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF9F8F8),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0xFFC2C2C2),
+                                            blurRadius: 2,
+                                            offset:
+                                                Offset(0, 0), // Shadow position
                                           ),
                                         ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10)
-                          ],
-                        );
-                      },
-                    ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 55,
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xffF2861E),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              image: DecorationImage(
+                                                image: MemoryImage(
+                                                  base64Decode(
+                                                      listKategori[index]
+                                                          ['gambar_kategori']),
+                                                ),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 140,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 2),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${listKategori[index]['nama_kategori']}",
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  "${listKategori[index]['keterangan_kategori']}",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Color(0xff727272),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10)
+                                ],
+                              );
+                            },
+                          ),
                   ),
                   const SizedBox(
                     height: 15,
@@ -383,95 +391,102 @@ class _DashboardPageState extends State<DashboardPage> {
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 20,
-                            crossAxisSpacing: 20,
-                            childAspectRatio: 8 / 9,
-                          ),
-                          itemCount: listProduk.length,
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () {
-                                Get.to(DetailProduct(
-                                  id_produk: listProduk[index]['id_produk'],
-                                  id_user: widget.id_user,
-                                ));
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF9F8F8),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0xFFC2C2C2),
-                                      blurRadius: 2,
-                                      offset: Offset(0, 0), // Shadow position
-                                    ),
-                                  ],
+                        loadingProduk
+                            ? const LoadingWidget()
+                            : GridView.builder(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 20,
+                                  crossAxisSpacing: 20,
+                                  childAspectRatio: 8 / 9,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: double.infinity,
-                                      height: 120,
+                                itemCount: listProduk.length,
+                                shrinkWrap: true,
+                                physics: const ScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () {
+                                      Get.to(DetailProduct(
+                                        id_produk: listProduk[index]
+                                            ['id_produk'],
+                                        id_user: widget.id_user,
+                                      ));
+                                    },
+                                    child: Container(
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFECECEC),
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                        image: DecorationImage(
-                                            image: MemoryImage(
-                                          base64Decode(
-                                              listProduk[index]['foto_produk']),
-                                        )),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 7,
+                                        color: const Color(0xFFF9F8F8),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0xFFC2C2C2),
+                                            blurRadius: 2,
+                                            offset:
+                                                Offset(0, 0), // Shadow position
+                                          ),
+                                        ],
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "${listProduk[index]['nama_produk']}",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xff727272),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 120,
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFECECEC),
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(20),
+                                                topRight: Radius.circular(20),
+                                              ),
+                                              image: DecorationImage(
+                                                  image: MemoryImage(
+                                                base64Decode(listProduk[index]
+                                                    ['foto_produk']),
+                                              )),
                                             ),
                                           ),
-                                          const SizedBox(height: 5),
-                                          Text(
-                                            "Rp${NumberFormat('#,###').format(listProduk[index]['harga'])}"
-                                                .replaceAll(",", "."),
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w900,
-                                              color: Color(0xffF2861E),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 7,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${listProduk[index]['nama_produk']}",
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xff727272),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  "Rp${NumberFormat('#,###').format(listProduk[index]['harga'])}"
+                                                      .replaceAll(",", "."),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: Color(0xffF2861E),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ],
                     ),
                   ),
