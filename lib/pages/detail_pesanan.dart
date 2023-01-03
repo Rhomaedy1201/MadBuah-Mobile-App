@@ -57,7 +57,7 @@ class _DetailPesananState extends State<DetailPesanan> {
 
     try {
       Uri url = Uri.parse(
-          "${network.update_status_transaksi}?status=Pesanan Selesai&id_transaksi=${widget.id_transaksi}");
+          "${network.update_status_transaksi}?status=Selesai&id_transaksi=${widget.id_transaksi}");
       var response = await http.put(url);
       print(response.body);
     } catch (e) {
@@ -86,38 +86,39 @@ class _DetailPesananState extends State<DetailPesanan> {
             bottomNavigationBar: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: ElevatedButton(
-                onPressed: (status == "Sudah dibayar")
-                    ? () {
-                        QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.warning,
-                          text: 'Apakah kamu yakin sudah menerima pesanan?',
-                          confirmBtnText: "Iya",
-                          onConfirmBtnTap: () async {
-                            Get.back();
+                onPressed:
+                    (status == "Sudah dibayar" || status == "Sedang diposes")
+                        ? () {
                             QuickAlert.show(
                               context: context,
-                              type: QuickAlertType.success,
-                              title: "Berhasil menerima pesanan",
-                              confirmBtnText: "👌",
-                              confirmBtnColor: Color(0xFFE0E0E0),
-                              onConfirmBtnTap: () {
-                                _getTransaksi();
+                              type: QuickAlertType.warning,
+                              text: 'Apakah kamu yakin sudah menerima pesanan?',
+                              confirmBtnText: "Iya",
+                              onConfirmBtnTap: () async {
+                                Get.back();
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.success,
+                                  title: "Berhasil menerima pesanan",
+                                  confirmBtnText: "👌",
+                                  confirmBtnColor: Color(0xFFE0E0E0),
+                                  onConfirmBtnTap: () {
+                                    _getTransaksi();
+                                    Get.back();
+                                  },
+                                );
+                                updateStatusTransaksi();
+                              },
+                              cancelBtnText: "Batal",
+                              showCancelBtn: true,
+                              animType: QuickAlertAnimType.slideInUp,
+                              onCancelBtnTap: () {
                                 Get.back();
                               },
+                              title: "Warning!",
                             );
-                            updateStatusTransaksi();
-                          },
-                          cancelBtnText: "Batal",
-                          showCancelBtn: true,
-                          animType: QuickAlertAnimType.slideInUp,
-                          onCancelBtnTap: () {
-                            Get.back();
-                          },
-                          title: "Warning!",
-                        );
-                      }
-                    : null,
+                          }
+                        : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffF2861E),
                   fixedSize: const Size(double.infinity, 45),
