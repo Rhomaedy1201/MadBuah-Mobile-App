@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-
+// 
 class Networks {
   final get_produk =
       "http://madbuah.wstif3c.id/restApi_madBuah/produk/get_produk.php".obs;
