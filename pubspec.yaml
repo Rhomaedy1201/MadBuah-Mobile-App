@@ -22,8 +22,6 @@ version: 1.0.0+1
 environment:
   sdk: '>=2.17.6'
 
-# the latest version available on pub.dev. To see which dependencies have newer
-
 dependencies:
   carousel_slider: ^4.2.1
   cupertino_icons: ^1.0.2
